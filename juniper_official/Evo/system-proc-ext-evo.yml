@@ -1,0 +1,12 @@
+---
+SystemProcExtEvoTable:
+    command: show system processes extensive
+    key: cmd
+    title: '  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND'
+    view: SystemProcExtEvoView
+
+SystemProcExtEvoView:
+    regex:
+        cpu: '.*[S|R]\s+(\d+\.\d+)\s+'
+        mem: '(\d+\.\d+).* '
+        cmd: '(\w+.*)'

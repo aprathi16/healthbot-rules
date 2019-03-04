@@ -1,7 +1,7 @@
 ---
 StorageTable:
     rpc: get-system-storage
-    item: filesystem
+    item: filesystem | multi-routing-engine-item/system-storage-information/filesystem
     key: mounted-on
     view: StorageView
 
