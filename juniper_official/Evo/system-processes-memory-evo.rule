@@ -14,6 +14,24 @@ iceberg {
                     path cmd;
                 }
                 type string;
+            } 
+            field virtual-memory {
+                sensor SystemProcExtEvoSensor {
+                    path virt;
+                }
+                type float;
+            }
+            field resident-memory {
+                sensor SystemProcExtEvoSensor {
+                    path res;
+                }
+                type float;
+            }
+            field shared-memory {
+                sensor SystemProcExtEvoSensor {
+                    path shr;
+                }
+                type float;
             }
             field max-threshold {
                 constant {
@@ -55,7 +73,7 @@ iceberg {
                     then {
                         status {
                             color red;
-                            message "$daemon-name mem utilization ($mem-util-percent), crossed high threshold ($max-threshold)";
+                            message "$daemon-name mem utilization ($mem-util-percent), crossed high threshold ($max-threshold). virtual memory: ($virtual-memory), resident-memory: ($resident-memory), shared-memory: ($shared-memory)";
                         }
                     }
                 }
@@ -68,7 +86,7 @@ iceberg {
                     then {
                         status {
                             color yellow;
-                            message "$daemon-name mem utilization ($mem-util-percent), is in middle range";
+                            message "$daemon-name mem utilization ($mem-util-percent), is in middle range. virtual memory: ($virtual-memory), resident-memory: ($resident-memory), shared-memory: ($shared-memory)";
                         }
                     }
                 }
@@ -76,7 +94,7 @@ iceberg {
                     then {
                         status {
                             color green;
-                            message "$daemon-name mem utilization:($mem-util-percent), is normal";
+                            message "$daemon-name mem utilization:($mem-util-percent), is normal. virtual memory: ($virtual-memory), resident-memory: ($resident-memory), shared-memory: ($shared-memory)";
                         }
                     }
                 }
