@@ -1,0 +1,128 @@
+iceberg {
+    topic protocol.bgp {
+        rule check-bgp-session-stats-all-kpis {
+            keys peer-address;
+            rule-frequency 60s;
+            sensor bgp-sensor {
+                iAgent {
+                    file bgp-get-neighbors.yml;
+                    table BgpNeighborTable;
+                    frequency 60s;
+                }
+            }
+            field flap-count-threshold {
+                constant {
+                    value "{{flap-count-threshold}}";
+                }
+                type integer;
+                description flap-count-threshold;
+            }
+            field max-received-route-count {
+                constant {
+                    value "{{max-received-route-count}}";
+                }
+                type integer;
+                description "Received routes count increase threshold";
+            }
+            trigger neigbor-flap {
+                frequency 60s;
+                term is-session-flapping {
+                    when {
+                        min-rate-of-increase "$flap-count" { ## Warning: 'min-rate-of-increase' is deprecated
+                            rate "$flap-count-threshold";
+                            time-range 60s;
+                        }
+                    }
+                    then {
+                        status {
+                            color red;
+                            message "Neighbor session flapping";
+                        }
+                    }
+                }
+                term is-session-inconsistent {
+                    when {
+                        min-rate-of-increase "$flap-count" { ## Warning: 'min-rate-of-increase' is deprecated
+                            rate "$flap-count-threshold";
+                        }
+                    }
+                    then {
+                        status {
+                            color yellow;
+                            message "Neighbor session inconsistent";
+                        }
+                    }
+                }
+                term is-session-stable {
+                    then {
+                        status {
+                            color green;
+                            message "Neighbor session stable";
+                        }
+                    }
+                }
+            }
+            trigger neighbor-state {
+                frequency 60s;
+                term is-neighbor-up {
+                    when {
+                        matches-with "$peer-state" Established {
+                            ignore-case;
+                        }
+                    }
+                    then {
+                        status {
+                            color green;
+                            message "Neighbor session up";
+                        }
+                    }
+                }
+                term is-neighbor-down {
+                    then {
+                        status {
+                            color red;
+                            message "Neighbor session down";
+                        }
+                    }
+                }
+            }
+            trigger received-routes {
+                frequency 60s;
+                term is-rcd-route-count-above-threshold {
+                    when {
+                        greater-than-or-equal-to "$received-routes" "$max-received-route-count";
+                    }
+                    then {
+                        status {
+                            color red;
+                            message "Received route count ($received-routes) exceeds threshold";
+                        }
+                    }
+                }
+                term is-rcd-route-count-normal {
+                    then {
+                        status {
+                            color green;
+                            message "Received route count ($received-routes) is within threshold";
+                        }
+                    }
+                }
+            }
+            variable flap-count-threshold {
+                value 1;
+                description "BGP neighbor session flaps threshold: Number of flap increase between metrics, before we report anomaly";
+                type int;
+            }
+            variable max-received-route-count {
+                value 10000;
+                description "BGP neighbor session received routes threshold: Number of received route count increase between metrics, before we report anomaly";
+                type int;
+            }
+            variable neighbors {
+                value .*;
+                description "BGP neighbor addresses to monitor, regular expression, e.g. '172.16.*'";
+                type string;
+            }
+        }
+    }
+}
