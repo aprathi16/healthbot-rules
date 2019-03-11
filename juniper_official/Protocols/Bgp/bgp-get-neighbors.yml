@@ -2,15 +2,14 @@
 BgpNeighborTable:
   rpc: get-bgp-neighbor-information
   item: bgp-peer
-  key: 
-    - peer-address
-    - peer-state
-    - flap-count
-    - peer-fwd-rti
+  key: peer-address
   view: BgpNeighborTableView
 
 BgpNeighborTableView:
   fields:
+    peer-state: peer-state
+    flap-count: flap-count
+    peer-fwd-rti: peer-fwd-rti
     rib-summary: _BgpNeighborRibTable
 
 _BgpNeighborRibTable:

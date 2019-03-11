@@ -1,0 +1,44 @@
+iceberg {
+    topic protocol.bgp {
+        rule check-bgp-session-state-iagent {
+            keys peer-address;
+            rule-frequency 60s;
+            sensor bgp-sensor {
+                iAgent {
+                    file bgp-get-neighbors.yml;
+                    table BgpNeighborTable;
+                    frequency 60s;
+                }
+            }
+            trigger neighbor-state {
+                frequency 60s;
+                term is-neighbor-up {
+                    when {
+                        matches-with "$peer-state" Established {
+                            ignore-case;
+                        }
+                    }
+                    then {
+                        status {
+                            color green;
+                            message "Neighbor session up";
+                        }
+                    }
+                }
+                term is-neighbor-down {
+                    then {
+                        status {
+                            color red;
+                            message "Neighbor session down";
+                        }
+                    }
+                }
+            }
+            variable flap-count-threshold {
+                value 1;
+                description "BGP neighbor session flaps threshold: Number of flap increase between metrics, before we report anomaly";
+                type int;
+            }
+        }
+    }
+}
