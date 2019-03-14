@@ -19,7 +19,7 @@ iceberg {
                 sensor SystemProcExtEvoSensor {
                     path virt;
                 }
-                type float;
+                type string;
             }
             field resident-memory {
                 sensor SystemProcExtEvoSensor {
@@ -77,7 +77,7 @@ iceberg {
                         }
                     }
                 }
-                term is-cpu-utilization-warn {
+                term is-mem-utilization-warn {
                     when {
                         greater-than-or-equal-to "$mem-util-percent" "$min-threshold" {
                             time-range 3m;
@@ -90,7 +90,7 @@ iceberg {
                         }
                     }
                 }
-                term is-cpu-utilization-low {
+                term is-mem-utilization-low {
                     then {
                         status {
                             color green;

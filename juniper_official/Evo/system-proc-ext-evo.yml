@@ -7,7 +7,7 @@ SystemProcExtEvoTable:
 
 SystemProcExtEvoView:
     regex:
-        virt: '\s*(\d+)\s+'
+        virt: '\s*(\d+\.?\d*[a-z]?)\s+'
         res: '(\d+)\s+'
         shr: '(\d+)\s+[S|R]\s+'
         cpu: '(\d+\.\d+)\s+'
