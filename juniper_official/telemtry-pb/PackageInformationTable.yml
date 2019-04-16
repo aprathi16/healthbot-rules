@@ -1,0 +1,9 @@
+---
+PackageInformationTable:
+    rpc: get-software-information
+    item: package-information
+    key: name
+    view: PackageInformationView
+PackageInformationView:
+    fields:
+      comment: comment

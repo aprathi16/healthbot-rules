@@ -1,0 +1,15 @@
+---
+SystemConnectionTable:
+    command: show system connection
+    key: foreign-address
+    title: 'Proto Recv-Q Send-Q  Local Address                                 Foreign Address                               (state)'
+    view: SystemConnectionView
+
+SystemConnectionView:
+    regex:
+        protocol: '[a-z]+\d*'
+        sendq: '\d+'
+        recvq: '\d+'
+        local-address: '[\d\.]+'
+        foreign-address: '[\d\.]+'
+        state: '\w+'

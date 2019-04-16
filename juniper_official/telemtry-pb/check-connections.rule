@@ -1,0 +1,108 @@
+iceberg {
+    topic telemetry.connections {
+        rule check-connections {
+            keys foreign-address;
+            sensor all-connections {
+                iAgent {
+                    file systemconnect.yml;
+                    table SystemConnectionTable;
+                    frequency 60s;
+                }
+            }
+            field foreign-address {
+                sensor all-connections {
+                    where "foreign-address =~ /{{foreign-connection}}/";
+                    path foreign-address;
+                }
+                type string;
+            }
+            field recvq-treshold-value {
+                constant {
+                    value "{{recvq-treshold}}";
+                }
+                type integer;
+            }
+            field recvq-value {
+                sensor all-connections {
+                    path recvq;
+                }
+                type integer;
+            }
+            field required-foreign-address {
+                constant {
+                    value "{{foreign-connection}}";
+                }
+                type string;
+            }
+            field sendq-treshold-value {
+                constant {
+                    value "{{sendq-treshold}}";
+                }
+                type integer;
+            }
+            field sendq-value {
+                sensor all-connections {
+                    path sendq;
+                }
+                type integer;
+            }
+            trigger recvq-check {
+                frequency 60s;
+                term is-high {
+                    when {
+                        greater-than "$recvq-value" "$recvq-treshold-value";
+                    }
+                    then {
+                        status {
+                            color red;
+                            message "Recv-Q value is $recvq-value";
+                        }
+                    }
+                }
+                term is-normal {
+                    then {
+                        status {
+                            color green;
+                            message "Recv-Q value is $recvq-value";
+                        }
+                    }
+                }
+            }
+            trigger sendq-check {
+                frequency 60s;
+                term is-high {
+                    when {
+                        greater-than "$sendq-value" "$sendq-treshold-value";
+                    }
+                    then {
+                        status {
+                            color red;
+                            message "Send-Q value is $sendq-value";
+                        }
+                    }
+                }
+                term is-normal {
+                    then {
+                        status {
+                            color green;
+                            message "Send-Q value is $sendq-value";
+                        }
+                    }
+                }
+            }
+            variable foreign-connection {
+                value .*;
+                description "address of the connection to be monitored";
+                type string;
+            }
+            variable recvq-treshold {
+                value 0;
+                type int;
+            }
+            variable sendq-treshold {
+                value 0;
+                type int;
+            }
+        }
+    }
+}
