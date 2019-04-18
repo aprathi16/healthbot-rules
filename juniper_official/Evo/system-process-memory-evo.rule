@@ -1,35 +1,52 @@
 iceberg {
     topic evo.system.processes {
         rule check-process-memory-evo {
-            keys [ daemon daemon-name ];
+            keys daemon-name;
             sensor SystemProcExtEvoSensor {
                 iAgent {
-                    file system-proc-ext-evo.yml;
+                    file system-processes-exec.yml;
                     table SystemProcExtEvoTable;
                     frequency 60s;
                 }
             }
+            function toKiloBytes {
+                path system-proc-extn.py;
+                method kb_convert;
+                argument size_value {
+                    mandatory;
+                }
+            } 
+
             field daemon-name {
                 sensor SystemProcExtEvoSensor {
                     path cmd;
                 }
                 type string;
             } 
-            field virtual-memory {
-                sensor SystemProcExtEvoSensor {
-                    path virt;
-                }
-                type string;
-            }
             field resident-memory {
-                sensor SystemProcExtEvoSensor {
-                    path res;
+                formula {
+                    user-defined-function {
+                        function-name toKiloBytes;
+                        argument size_value "$res";
+                    }
                 }
                 type float;
             }
             field shared-memory {
-                sensor SystemProcExtEvoSensor {
-                    path shr;
+                formula {
+                    user-defined-function {
+                        function-name toKiloBytes;
+                        argument size_value "$shr";
+                    }
+                }
+                type float;
+            }
+            field virtual-memory {
+                formula {
+                    user-defined-function {
+                        function-name toKiloBytes;
+                        argument size_value "$virt";
+                    }
                 }
                 type float;
             }

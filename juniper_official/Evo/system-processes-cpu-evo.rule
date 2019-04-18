@@ -4,7 +4,7 @@ iceberg {
             keys [ daemon daemon-name ];
             sensor SystemProcExtEvoSensor {
                 iAgent {
-                    file system-proc-ext-evo.yml;
+                    file system-processes-exec.yml;
                     table SystemProcExtEvoTable;
                     frequency 60s;
                 }

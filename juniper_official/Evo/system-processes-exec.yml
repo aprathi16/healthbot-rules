@@ -1,6 +1,6 @@
 ---
 SystemProcExtEvoTable:
-    command: show system processes extensive | find PID | trim 22
+    command: show system processes extensive
     key: cmd
     title: '  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND'
     view: SystemProcExtEvoView
@@ -8,8 +8,8 @@ SystemProcExtEvoTable:
 SystemProcExtEvoView:
     regex:
         virt: '\s*(\d+\.?\d*[a-z]?)\s+'
-        res: '(\d+)\s+'
-        shr: '(\d+)\s+[S|R]\s+'
+        res: '(\d+\.?\d*[a-z]?)\s+'
+        shr: '(\d+\.?\d*[a-z]?)\s+[S|R]\s+'
         cpu: '(\d+\.\d+)\s+'
         mem: '(\d+\.\d+)[^a-zA-Z]+'
         cmd: '(\w+.*)'
