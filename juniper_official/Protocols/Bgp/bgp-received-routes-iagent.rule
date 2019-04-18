@@ -31,6 +31,9 @@ iceberg {
                     }
                 }
                 term is-rcd-route-count-normal {
+                    when {
+                        less-than "$received-routes" "$max-received-route-count";
+                    }
                     then {
                         status {
                             color green;
@@ -47,3 +50,6 @@ iceberg {
         }
     }
 }
+
+
+ 
