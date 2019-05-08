@@ -1,0 +1,15 @@
+---
+SystemConnectionTable:
+    command: show system connections 
+    key: foreign-address
+    view: SystemConnectionView
+
+SystemConnectionView:
+    regex:
+        protocol: '[a-z]+\d*'
+        sendq: '\d+'
+        recvq: '\d+'
+        local-address: '[\d\.\*]+21883'
+        foreign-address: '[\d\.\*]+'
+        state: '\w+'
+

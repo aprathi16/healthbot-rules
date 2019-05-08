@@ -1,0 +1,55 @@
+iceberg {
+    topic telemetry.processes {
+        rule check-daemons {
+            rule-frequency 60s;
+            field daemon {
+                reference {
+                    path "/topic[topic-name='telemetry.processes']/rule[rule-name='fetch-daemons']/field[daemon='{{required-daemon}}']/daemon";
+                }
+                type string;
+                description "Name of the daemon";
+            }
+            field required-daemon {
+                constant {
+                    value "{{required-daemon}}";
+                }
+                type string;
+                description "Name of the daemon required";
+            }
+            field wcpu {
+                reference {
+                    path "/topic[topic-name='telemetry.processes']/rule[rule-name='fetch-daemons']/field[daemon='{{required-daemon}}']/cpu-usage";
+                }
+                type float;
+                description "Daemon cpu utilization";
+            }
+            trigger Daemon-exists {
+                frequency 60s;
+                term if-exists {
+                    when {
+                        matches-with "$daemon" "$required-daemon";
+                    }
+                    then {
+                        status {
+                            color green;
+                            message "Daemon $required-daemon is present. CPU utilization $wcpu";
+                        }
+                    }
+                }
+                term if-not-present {
+                    then {
+                        status {
+                            color red;
+                            message "Daemon $required-daemon is not present. CPU utilization $wcpu";
+                        }
+                    }
+                }
+            }
+            variable required-daemon {
+                value jsd;
+                description "Name of single daemon that is to be checked ";
+                type string;
+            }
+        }
+    }
+}

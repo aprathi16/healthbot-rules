@@ -1,0 +1,27 @@
+iceberg {
+    topic telemetry.processes {
+        rule fetch-daemons {
+            keys daemon;
+            sensor system-processes {
+                iAgent {
+                    file system-processes-telemetry.yml;
+                    table SystemProcExtTable;
+                    frequency 60s;
+                }
+            }
+            field cpu-usage {
+                sensor system-processes {
+                    path wcpu;
+                }
+                type float;
+                description "CPU usage of the current program";
+            }
+            field daemon {
+                sensor system-processes {
+                    path cmd;
+                }
+                description "Daemon to be monitored";
+            }
+        }
+    }
+}    

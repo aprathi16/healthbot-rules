@@ -1,0 +1,42 @@
+iceberg {
+	topic telemetry.sensors {
+	    rule network-agent {
+	        keys sensor-path;
+            sensor network-agent {
+                iAgent {
+                    file sensortable.yml;
+                    table SensorTable;
+                    frequency 60s;
+                }
+            }
+            field sensor-path {
+                sensor network-agent {
+                    path sensor-path;
+                }
+                type string;
+            }
+            trigger packet-drop {
+                frequency 60s;
+                term if-packetdrop {
+                    when {
+                        greater-than "$packet-drops" 0;
+                    }
+                    then {
+                        status {
+                            color red;
+                            message "$packet-drops packet drops for sersor $sensor-path";
+                        }
+                    }
+                }
+                term if-no-packetdrops {
+                    then {
+                        status {
+                            color green;
+                            message "$packet-drops packet drops for sersor $sensor-path";
+                        }
+                    }
+                }
+            }
+        }
+	}
+}

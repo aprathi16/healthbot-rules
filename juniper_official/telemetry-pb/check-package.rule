@@ -1,0 +1,53 @@
+iceberg {
+    topic telemetry.packages {
+        rule check-package {
+            rule-frequency 60s;
+            field find-package {
+                constant {
+                    value "{{check-package}}";
+                }
+                type string;
+                description "name of the package to be checked";
+            }
+            field pack-comment {
+                reference {
+                    path "/topic[topic-name='telemetry.packages']/rule[rule-name='check-package']/field[name='{{check-package}}']/comment";
+                }
+                type string;
+            }
+            field pack-name {
+                reference {
+                    path "/topic[topic-name='telemetry.packages']/rule[rule-name='check-package']/field[name='{{check-package}}']/name";
+                }
+                type string;
+            }
+            trigger package-exists {
+                frequency 60s;
+                term if-exists {
+                    when {
+                        matches-with "$pack-name" "$find-package";
+                    }
+                    then {
+                        status {
+                            color green;
+                            message "Package $pack-name exists";
+                        }
+                    }
+                }
+                term if-not-exists {
+                    then {
+                        status {
+                            color red;
+                            message "Package $pack-name does not exist";
+                        }
+                    }
+                }
+            }
+            variable check-package {
+                value na-telemetry;
+                description "Name of a single package that is to be checked";
+                type string;
+            }
+        }
+    }
+}     

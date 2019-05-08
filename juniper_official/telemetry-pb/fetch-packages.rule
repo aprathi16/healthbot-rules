@@ -1,0 +1,27 @@
+iceberg {
+    topic telemetry.packages {
+        rule fetch-packages {
+            keys name;
+            sensor package {
+                iAgent {
+                    file PackageInformationTable.yml;
+                    table PackageInformationTable;
+                    frequency 60s;
+                }
+            }
+            field comment {
+                sensor package {
+                    path comment;
+                }
+                type string;
+            }
+            field name {
+                sensor package {
+                    path name;
+                }
+                type string;
+                description "package name ";
+            }
+        }
+    }
+}

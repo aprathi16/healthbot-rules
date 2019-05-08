@@ -1,0 +1,15 @@
+---
+SensorTable:
+  rpc: get-telemetry-subscription-statistics
+  args:
+    detail: True
+  item: subscription-details/sensor-statistics-detail
+  key: sensor-path
+  view: SensorView
+SensorView:
+  fields:
+    rep-interval: rep-interval
+    component-name: component-name
+    bytes-sent: bytes-sent
+    packets-sent: packets-sent
+    packet-drops: packet-drops
